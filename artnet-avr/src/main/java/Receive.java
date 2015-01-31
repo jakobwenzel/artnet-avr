@@ -56,7 +56,7 @@ public class Receive implements ArtNetServerListener {
                 e.printStackTrace();
             }
             artnet.start();
-            artnet.setBroadCastAddress("192.168.178.96");
+            //artnet.setBroadCastAddress("192.168.178.96");
 
             artnet.addServerListener(this);
 
@@ -79,7 +79,7 @@ public class Receive implements ArtNetServerListener {
         if (packet instanceof ArtDmxPacket) {
             ArtDmxPacket dmx = (ArtDmxPacket) packet;
             //System.out.println("dmx.getNumChannels() = " + dmx.getNumChannels());
-            System.out.println("dmx.getDmx(1) = " + dmx.getDmx(1));
+            //System.out.println("dmx.getDmx(1) = " + dmx.getDmx(1));
 
             try {
                 if (serialPort!=null)
