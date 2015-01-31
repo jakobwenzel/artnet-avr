@@ -1,0 +1,11 @@
+apply plugin: 'application'
+repositories {
+    maven {
+        url 'http://nexus.root1.de/content/repositories/releases/'
+    }
+}
+dependencies {
+    compile project(':artnet4j')
+    compile 'de.root1:rxtx-rebundled:2.1-7r2-4'
+}
+mainClassName="Receive"
