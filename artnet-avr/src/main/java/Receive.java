@@ -1,3 +1,7 @@
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.SocketException;
+
 import artnet4j.ArtNet;
 import artnet4j.ArtNetException;
 import artnet4j.ArtNetServer;
@@ -7,9 +11,6 @@ import artnet4j.packets.ArtNetPacket;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
-
-import java.io.IOException;
-import java.net.SocketException;
 
 /**
  * Created by Jakob on 30.01.2015.
@@ -25,6 +26,7 @@ public class Receive implements ArtNetServerListener {
 
     void connect ( String portName ) throws Exception
     {
+        System.setProperty("gnu.io.rxtx.SerialPorts", portName);
         CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
         if ( portIdentifier.isCurrentlyOwned() )
         {
@@ -37,7 +39,7 @@ public class Receive implements ArtNetServerListener {
             if ( commPort instanceof SerialPort)
             {
                  serialPort = (SerialPort) commPort;
-                serialPort.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+                serialPort.setSerialPortParams(115200,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
 
             }
             else
@@ -51,7 +53,7 @@ public class Receive implements ArtNetServerListener {
         ArtNet artnet = new ArtNet();
         try {
             try {
-                connect("COM3"); //TODO make configurable
+                connect("/dev/ttyACM0"); //TODO make configurable
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -74,16 +76,22 @@ public class Receive implements ArtNetServerListener {
 
     }
 
+    final static int channelCount = 60*3;
     @Override
     public void artNetPacketReceived(ArtNetPacket packet) {
         if (packet instanceof ArtDmxPacket) {
             ArtDmxPacket dmx = (ArtDmxPacket) packet;
             //System.out.println("dmx.getNumChannels() = " + dmx.getNumChannels());
-            //System.out.println("dmx.getDmx(1) = " + dmx.getDmx(1));
+            System.out.println("New packet");
 
             try {
-                if (serialPort!=null)
-                    serialPort.getOutputStream().write(dmx.getDmx(1));
+                if (serialPort!=null) {
+                    OutputStream out = serialPort.getOutputStream();
+                    for (int i=1;i<=channelCount;i++) {
+                        System.out.println("dmx.getDmx("+i+") = " + dmx.getDmx(i));
+                        out.write(dmx.getDmx(i));
+                    }
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
