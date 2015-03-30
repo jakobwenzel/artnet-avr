@@ -33,7 +33,7 @@ module ledDriver #( parameter NUM_LEDS = 60 )(input clk, input reset, output reg
 	
 	//Count repeatedly counts from 0 to 24.
 	reg[4:0] count = 0;
-	always @(posedge clk) begin
+	always @(posedge clk or posedge reset) begin
 		if (reset || ~running) begin
 			count<=0;
 		end else begin
@@ -50,7 +50,7 @@ module ledDriver #( parameter NUM_LEDS = 60 )(input clk, input reset, output reg
   
   reg firstbit = 0;
 	
-	always @(posedge clk) begin
+	always @(posedge clk or posedge reset) begin
 	  if (reset) begin
 	    running <= 0;
 	    firstbit <= 1;
@@ -87,7 +87,7 @@ module ledDriver #( parameter NUM_LEDS = 60 )(input clk, input reset, output reg
 	assign current = data[(NUM_LEDS*24)-1];
 	
 	//Pulse out the data
-	always @(posedge clk) begin
+	always @(posedge clk or posedge reset) begin
 		if (reset || ~running) begin
 			led <= 0;
 		end else begin
@@ -100,8 +100,8 @@ module ledDriver #( parameter NUM_LEDS = 60 )(input clk, input reset, output reg
 	end
 		
 	//Counter for res contition
-	reg [9:0] resCounter=0;
-	always @(posedge clk) begin
+	reg [10:0] resCounter=0;
+	always @(posedge clk or posedge reset) begin
 	  
 	  if (reset || ~resCounting) begin
 	    resCounter=0;
@@ -113,6 +113,6 @@ module ledDriver #( parameter NUM_LEDS = 60 )(input clk, input reset, output reg
 	  
 	end
 	
-	assign finish = resCounter==10'h3FF;
+	assign finish = resCounter==11'h7FF;
 	
 endmodule
