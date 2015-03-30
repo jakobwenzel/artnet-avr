@@ -1,7 +1,7 @@
 apply plugin: 'application'
 mainClassName="Test"
 //Do not use system wide jna, as it may be the wrong version...
-applicationDefaultJvmArgs = ["-Djna.nosys=true"]
+applicationDefaultJvmArgs = ["-Djna.nosys=true","-Djava.library.path=C:/Users/Jakob/git/artnet-avr/libraries/x64/"]
 
 dependencies {
 	compile project(':libftdi')

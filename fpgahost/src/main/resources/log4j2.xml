@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="error" strict="true" >
+    <filter type="ThresholdFilter" level="trace"/>
+
+    <appenders>
+        <appender type="Console" name="STDOUT">
+            <layout type="PatternLayout" pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36}.%method -  %msg%n%throwable{full}" />
+        </appender>
+        
+    </appenders>
+
+    <loggers>
+        
+        <!--logger name ="usb" level="trace" additivity="false" >
+        	<appender-ref ref="STDOUT" />
+        </logger-->
+
+		<Root level="trace">
+			<AppenderRef ref="STDOUT"/>
+		</Root>
+    </loggers>
+
+</configuration>

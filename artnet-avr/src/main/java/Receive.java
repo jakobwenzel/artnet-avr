@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
 
@@ -16,9 +17,13 @@ import gnu.io.SerialPort;
  * Created by Jakob on 30.01.2015.
  */
 public class Receive implements ArtNetServerListener {
-
+    public static final boolean verbose = false;
+    private static final int numLeds = 170;
+    private static final int baudrate = 115200;
+    private static final String port = "COM3";
 
     private SerialPort serialPort;
+    PacketBuffer<byte[]> buf = new PacketBuffer<>();
 
     public static void main(String[] args) {
         new Receive().test();
@@ -39,7 +44,7 @@ public class Receive implements ArtNetServerListener {
             if ( commPort instanceof SerialPort)
             {
                  serialPort = (SerialPort) commPort;
-                serialPort.setSerialPortParams(115200,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+                serialPort.setSerialPortParams(baudrate,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
 
             }
             else
@@ -53,7 +58,8 @@ public class Receive implements ArtNetServerListener {
         ArtNet artnet = new ArtNet();
         try {
             try {
-                connect("/dev/ttyACM0"); //TODO make configurable
+                connect(port);
+                Thread.sleep(1000);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -61,6 +67,29 @@ public class Receive implements ArtNetServerListener {
             //artnet.setBroadCastAddress("192.168.178.96");
 
             artnet.addServerListener(this);
+
+            Runnable senderThread = new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        if (verbose)System.out.println("try to get package");
+                        byte[] packet = buf.get();
+                        if (verbose)System.out.println("got package");
+                        try {
+                            if (serialPort != null) {
+                                OutputStream out = serialPort.getOutputStream();
+                                out.write(packet);
+
+                                InputStream i = serialPort.getInputStream();
+                                i.read();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+            new Thread(senderThread).start();
 
         } catch (SocketException e) {
             e.printStackTrace();
@@ -76,25 +105,30 @@ public class Receive implements ArtNetServerListener {
 
     }
 
-    final static int channelCount = 60*3;
+    final static int channelCount = numLeds*3;
     @Override
     public void artNetPacketReceived(ArtNetPacket packet) {
         if (packet instanceof ArtDmxPacket) {
             ArtDmxPacket dmx = (ArtDmxPacket) packet;
             //System.out.println("dmx.getNumChannels() = " + dmx.getNumChannels());
-            System.out.println("New packet");
+            if (verbose) System.out.println("New packet");
 
-            try {
-                if (serialPort!=null) {
-                    OutputStream out = serialPort.getOutputStream();
-                    for (int i=1;i<=channelCount;i++) {
-                        System.out.println("dmx.getDmx("+i+") = " + dmx.getDmx(i));
-                        out.write(dmx.getDmx(i));
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            int s = 0;
+            for (int i = 1; i <= channelCount; i++) {
+                //System.out.println("dmx.getDmx("+i+") = " + dmx.getDmx(i));
+                int d = dmx.getDmx(i);
+                s+=d;
             }
+            //System.out.println("p "+s);
+
+
+            byte[] data = new byte[channelCount];
+            for (int i=0;i<channelCount;i++) {
+                data[i]=(byte)dmx.getDmx(i+1);
+            }
+
+            buf.put(data);
         }
     }
 
