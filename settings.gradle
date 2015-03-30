@@ -1,2 +1,4 @@
 include ':artnet4j'
 include ':artnet-avr'
+include ':fpgahost'
+include ':libftdi'

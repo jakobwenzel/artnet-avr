@@ -1,0 +1,6 @@
+
+    dependencies {
+	compile 'net.java.dev.jna:jna:4.0.0'
+	}
+
+
