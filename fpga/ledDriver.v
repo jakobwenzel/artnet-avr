@@ -1,4 +1,4 @@
-module ledDriver #( parameter NUM_LEDS = 60 )(input clk, input reset, output reg led, input[(NUM_LEDS*24)-1:0] inData, input start, output finish);
+module ledDriver /*#( parameter NUM_LEDS = 60 )*/(input clk, input reset, output reg led, input data, input lastBit, input start, output finish, output read);
 
 	//Generate the pulse width modulated output signal
 	
@@ -11,10 +11,8 @@ module ledDriver #( parameter NUM_LEDS = 60 )(input clk, input reset, output reg
 	//Are we waiting for RES?
 	reg resCounting = 0;
 	
-	
-	//The data we operate on
-  reg[(NUM_LEDS*24)-1:0] data;
-	
+								 
+		 /*
 	function integer clog2;
   input integer value;
   begin
@@ -27,9 +25,10 @@ module ledDriver #( parameter NUM_LEDS = 60 )(input clk, input reset, output reg
 	
 	parameter LOG_BITS = clog2(NUM_LEDS*24);
 	
-	reg[LOG_BITS-1:0] bitCnt = 0;
+	reg[LOG_BITS-1:0] bitCnt = 0;			 */
 	
 	
+	reg read = 0;
 	
 	//Count repeatedly counts from 0 to 24.
 	reg[4:0] count = 0;
@@ -44,34 +43,37 @@ module ledDriver #( parameter NUM_LEDS = 60 )(input clk, input reset, output reg
 			end
 		end
 	end
-	
+					 /*
 	wire lastBit;
-  assign lastBit = (bitCnt==(NUM_LEDS*24-1));
+  assign lastBit = (bitCnt==(NUM_LEDS*24-1));*/
   
   reg firstbit = 0;
 	
 	always @(posedge clk or posedge reset) begin
 	  if (reset) begin
 	    running <= 0;
-	    firstbit <= 1;
+	    firstbit <= 1;	   
+		read <= 0;
 	  end else begin
 	    if (~running & start) begin
 	    
 	      running <= 1;
-	      data <= inData;
-	      bitCnt<= 0;
+	      //data <= inData;
+	      //bitCnt<= 0;
 	      firstbit <= 1;
 	    
 	    end else if (running) begin
 	      firstbit<=0;
 	      if (lastBit && count==24) begin
 	        running <= 0;
-	        resCounting <= 1;
+	        resCounting <= 1;	 
+			read <= 0;
 	      end else if (count==0 && ~firstbit) begin
-	        data <= data << 1;
-	        bitCnt <= bitCnt +1;
+	        //data <= data << 1;
+			read <= 1;
+	        //bitCnt <= bitCnt +1;
 	        
-	      end
+	      end else read <= 0;
 	      
 	    end else if (resCounting && finish) begin
 	      resCounting <= 0;
@@ -81,10 +83,10 @@ module ledDriver #( parameter NUM_LEDS = 60 )(input clk, input reset, output reg
 
 	
 	
-	//The bit being currently output
+	/*//The bit being currently output
 	wire current;
 	//Is always the highest bit in the shift reg
-	assign current = data[(NUM_LEDS*24)-1];
+	assign current = data[(NUM_LEDS*24)-1];	  */
 	
 	//Pulse out the data
 	always @(posedge clk or posedge reset) begin
@@ -93,7 +95,7 @@ module ledDriver #( parameter NUM_LEDS = 60 )(input clk, input reset, output reg
 		end else begin
 			if (count==0) begin
 				led <= 1;
-			end else if ( (count==8 && ~current) || (count==16 && current)) begin
+			end else if ( (count==8 && ~data) || (count==16 && data)) begin
 				led<=0;
 			end
 		end

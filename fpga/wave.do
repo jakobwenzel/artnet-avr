@@ -1,31 +1,30 @@
-onerror {resume}
-quietly WaveActivateNextPane {} 0
-add wave -noupdate /test_ledDriver/clk
-add wave -noupdate /test_ledDriver/uut/inData
-add wave -noupdate /test_ledDriver/uut/data
-add wave -noupdate /test_ledDriver/uut/bitCnt
-add wave -noupdate /test_ledDriver/finish
-add wave -noupdate /test_ledDriver/led
-add wave -noupdate /test_ledDriver/reset
-add wave -noupdate /test_ledDriver/start
-add wave -noupdate /test_ledDriver/uut/current
-add wave -noupdate /test_ledDriver/uut/lastBit
-add wave -noupdate /test_ledDriver/uut/count
-TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {339882613 ps} 0} {{Cursor 2} {2775000 ps} 0}
-quietly wave cursor active 1
-configure wave -namecolwidth 150
-configure wave -valuecolwidth 100
-configure wave -justifyvalue left
-configure wave -signalnamewidth 1
-configure wave -snapdistance 10
-configure wave -datasetprefix 0
-configure wave -rowmargin 4
-configure wave -childrowmargin 2
-configure wave -gridoffset 0
-configure wave -gridperiod 1
-configure wave -griddelta 40
-configure wave -timeline 0
-configure wave -timelineunits ns
-update
-WaveRestoreZoom {331212500 ps} {396837500 ps}
+onerror { resume }
+transcript off
+add wave -noreg -logic {/test_top/uut/spiClk}
+add wave -noreg -logic {/test_top/uut/ledClk}
+add wave -noreg -logic {/test_top/uut/spiOut}
+add wave -noreg -logic {/test_top/uut/spiIn}
+add wave -noreg -logic {/test_top/uut/led}
+add wave -noreg -hexadecimal -literal -unsigned {/test_top/uut/writeCount}
+add wave -noreg -logic {/test_top/uut/write}
+add wave -noreg -logic {/test_top/uut/reset}
+add wave -noreg -logic {/test_top/uut/readData}
+add wave -noreg -logic {/test_top/uut/read}
+add wave -noreg -logic {/test_top/uut/q2}
+add wave -noreg -logic {/test_top/uut/q1}
+add wave -noreg -logic {/test_top/uut/ledFinished}
+add wave -noreg -logic {/test_top/uut/justSwitched}
+add wave -noreg -logic {/test_top/uut/switch}
+add wave -noreg -logic {/test_top/uut/seenSwitch}
+add wave -noreg -logic {/test_top/uut/spiFinished}
+add wave -noreg -logic {/test_top/uut/spiRealFinished}
+add wave -noreg -logic {/test_top/uut/firstRun}
+add wave -noreg -logic {/test_top/uut/empty2}
+add wave -noreg -logic {/test_top/uut/empty1}
+add wave -noreg -logic {/test_top/uut/empty}
+add wave -noreg -logic {/test_top/uut/ledDriver_inst/start}
+add wave -noreg -logic {/test_top/mask}
+add wave -noreg -logic {/test_top/uut/canSwitch}
+cursor "Cursor 1" 152883909ps  
+cursor "Cursor 2" 152210578ps  
+transcript on

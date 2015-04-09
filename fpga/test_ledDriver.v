@@ -18,9 +18,9 @@ module test_ledDriver();
 	  end
 	end
 	
-	ledDriver #( .NUM_LEDS(NUM_LEDS) ) uut (
+	/*ledDriver #( .NUM_LEDS(NUM_LEDS) ) uut (
 		.clk(clk), .reset(reset), .led(led), .inData(data), .start(start), .finish(finish)
-	);
+	);	 */
 	
 	dataGen #(.NUM_LEDS(NUM_LEDS) ) dataGen_inst (
 	  .clk(clk), .reset(reset), .run(finish), .data(data)

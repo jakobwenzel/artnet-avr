@@ -1,9 +1,10 @@
 apply plugin: 'application'
-mainClassName="Test"
+mainClassName="Receive"
 //Do not use system wide jna, as it may be the wrong version...
 applicationDefaultJvmArgs = ["-Djna.nosys=true","-Djava.library.path=C:/Users/Jakob/git/artnet-avr/libraries/x64/"]
 
 dependencies {
+        compile project(':artnet4j')
 	compile project(':libftdi')
         compile 'org.apache.logging.log4j:log4j-core:2.+'
         compile files('jd2xx.jar')

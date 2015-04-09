@@ -1,9 +1,9 @@
-import java.io.IOException;
-
 import usb.DeviceFinder;
 import usb.DeviceFinderFactory;
 import usb.FtdiDevice;
 import usb.MPSSEInit;
+
+import java.io.IOException;
 
 public class Test {
 	public static void main(String[] args) throws IOException {
@@ -27,17 +27,19 @@ public class Test {
 				System.console().readLine();
 				System.out.println("continuing");
 			}
-			byte[] data = new byte[900];
-			for (int i=0;i<data.length;i++)
-				data[i] = (byte) i;
+			byte[] data = new byte[3*300];
+			for (int i=0;i<data.length;i++) {
+				int d = (i % 150) + 1;
+				data[i] = (byte) d;
+			}
+			devB.MPSSE_ClockDataOut(false, true, data,data.length);
+			/*devB.MPSSE_ClockDataOut(true, true, data,data.length);
 			devB.MPSSE_ClockDataOut(true, true, data,data.length);
 			devB.MPSSE_ClockDataOut(true, true, data,data.length);
 			devB.MPSSE_ClockDataOut(true, true, data,data.length);
 			devB.MPSSE_ClockDataOut(true, true, data,data.length);
 			devB.MPSSE_ClockDataOut(true, true, data,data.length);
-			devB.MPSSE_ClockDataOut(true, true, data,data.length);
-			devB.MPSSE_ClockDataOut(true, true, data,data.length);
-			devB.MPSSE_ClockDataOut(true, true, data,data.length);
+			devB.MPSSE_ClockDataOut(true, true, data,data.length);*/
 		}
 		//devB.close();
 	}
